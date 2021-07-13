@@ -1,4 +1,6 @@
-## nginx 笔记
+---
+title: nginx 笔记
+---
 ### 使用docker 方式部署nginx  docker映射端口不一致时无法访问
 #### 现象 
   - 访问 http://xxx.com/home/ 带斜杠是正常的， 
