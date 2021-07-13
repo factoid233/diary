@@ -1,1 +1,1 @@
-# diary.github.io
+# ![diary](https://factoid233.github.io/diary)
