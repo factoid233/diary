@@ -1,0 +1,1 @@
+# diary.github.io
