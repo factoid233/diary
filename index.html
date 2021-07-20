@@ -172,7 +172,7 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2021-07-20 10:26:51" itemprop="dateCreated datePublished" datetime="2021-07-20T10:26:51+08:00">2021-07-20</time>
+              <time title="创建时间：2021-07-20 10:31:35" itemprop="dateCreated datePublished" datetime="2021-07-20T10:31:35+08:00">2021-07-20</time>
             </span>
 
           
@@ -186,7 +186,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h2 id="gitlab-分支比较的api-Repositories-API-Compare-返回的响应中-diffs-diff-为空"><a href="#gitlab-分支比较的api-Repositories-API-Compare-返回的响应中-diffs-diff-为空" class="headerlink" title="gitlab 分支比较的api(Repositories API Compare) 返回的响应中 $.diffs[*].diff 为空"></a>gitlab 分支比较的api(Repositories API Compare) 返回的响应中 $.diffs[*].diff 为空</h2><ul>
+          <h2 id="1-gitlab-分支比较的api-Repositories-API-Compare-返回的响应中-diffs-diff-为空"><a href="#1-gitlab-分支比较的api-Repositories-API-Compare-返回的响应中-diffs-diff-为空" class="headerlink" title="1. gitlab 分支比较的api(Repositories API Compare) 返回的响应中 $.diffs[*].diff 为空"></a>1. gitlab 分支比较的api(Repositories API Compare) 返回的响应中 $.diffs[*].diff 为空</h2><ul>
 <li>现象： 由于gitlab Diff limits的限制，即Maximum diff patch size最大只能为500KB，现像为如果新增一个文件行数特别多，返回的响应结果中 diff就是空的<blockquote>
 <p>This endpoint can be accessed without authentication if the repository is publicly accessible. Note that diffs could have an empty diff string if diff limits are reached.  <br/> <a target="_blank" rel="noopener" href="https://docs.gitlab.com/ee/api/repositories.html#compare-branches-tags-or-commits">gitlab Compare Api链接</a><br/></p>
 </blockquote>
@@ -222,7 +222,8 @@
 <p><a target="_blank" rel="noopener" href="https://docs.gitlab.com/ee/user/admin_area/diff_limits.html">gitlab diff limit链接</a></p>
 </blockquote>
 </li>
-<li>解决方案： 采用Jgit本地操作git仓库进行diff比较</li>
+<li>解决方案： 采用Jgit本地操作git仓库进行diff比较<h2 id="2-java编译提示-Invalid-signature-file-digest-for-Manifest-main-attributes"><a href="#2-java编译提示-Invalid-signature-file-digest-for-Manifest-main-attributes" class="headerlink" title="2. java编译提示 Invalid signature file digest for Manifest main attributes"></a>2. java编译提示 Invalid signature file digest for Manifest main attributes</h2></li>
+<li>解决方案： 删除jar包中的 *.SF *.DSA  *.RSA文件  </li>
 </ul>
 
       
@@ -267,7 +268,7 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2021-07-20 10:26:51" itemprop="dateCreated datePublished" datetime="2021-07-20T10:26:51+08:00">2021-07-20</time>
+              <time title="创建时间：2021-07-20 10:31:35" itemprop="dateCreated datePublished" datetime="2021-07-20T10:31:35+08:00">2021-07-20</time>
             </span>
 
           
