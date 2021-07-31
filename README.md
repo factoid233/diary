@@ -1,1 +1,1 @@
-# ![diary](https://factoid233.github.io/diary)
+# [博客地址](https://factoid233.github.io/diary)
