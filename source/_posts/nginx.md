@@ -1,5 +1,6 @@
 ---
 title: nginx 笔记
+date: 2021/05/10 00:00:00
 ---
 ## 1. 使用docker 方式部署nginx  docker映射端口不一致时无法访问
 - 现象
