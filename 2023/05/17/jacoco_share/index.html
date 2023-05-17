@@ -20,31 +20,35 @@
     var CONFIG = {"hostname":"factoid233.github.io","root":"/diary/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta name="description" content="nginx python linux react docker">
-<meta property="og:type" content="website">
-<meta property="og:title" content="factoid233的笔记">
-<meta property="og:url" content="https://factoid233.github.io/diary/index.html">
+  <meta name="description" content="前言在产品版本迭代的过程中，测试团队大部分是依据产品设计文档或者需求文档进行用例设计，无论是通过自动化测试的手段还是手工测试的手段去对产品的缺陷进行挖掘，存在以下问题：   不易得知用例有没有覆盖到该次代码的所有改动点。  虽然有jacoco现成的全量代码的覆盖率，但是针对于本次的代码改动不直观，不能确认本次的改动用例覆盖了多少，增量代码覆盖率的出现解决了这个痛点，赋能团队精准测试的能力。  所谓">
+<meta property="og:type" content="article">
+<meta property="og:title" content="jacoco增量代码覆盖率的实现与落地">
+<meta property="og:url" content="https://factoid233.github.io/diary/2023/05/17/jacoco_share/index.html">
 <meta property="og:site_name" content="factoid233的笔记">
-<meta property="og:description" content="nginx python linux react docker">
+<meta property="og:description" content="前言在产品版本迭代的过程中，测试团队大部分是依据产品设计文档或者需求文档进行用例设计，无论是通过自动化测试的手段还是手工测试的手段去对产品的缺陷进行挖掘，存在以下问题：   不易得知用例有没有覆盖到该次代码的所有改动点。  虽然有jacoco现成的全量代码的覆盖率，但是针对于本次的代码改动不直观，不能确认本次的改动用例覆盖了多少，增量代码覆盖率的出现解决了这个痛点，赋能团队精准测试的能力。  所谓">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://assets.che300.com/wiki/2021-07-28/16274595821893212.png">
+<meta property="article:published_time" content="2023-05-17T02:00:17.071Z">
+<meta property="article:modified_time" content="2023-05-17T02:00:17.071Z">
 <meta property="article:author" content="Factoid233">
 <meta property="article:tag" content="nginx python linux react docker">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://assets.che300.com/wiki/2021-07-28/16274595821893212.png">
 
-<link rel="canonical" href="https://factoid233.github.io/diary/">
+<link rel="canonical" href="https://factoid233.github.io/diary/2023/05/17/jacoco_share/">
 
 
 <script id="page-configurations">
   // https://hexo.io/docs/variables.html
   CONFIG.page = {
     sidebar: "",
-    isHome : true,
-    isPost : false,
+    isHome : false,
+    isPost : true,
     lang   : 'zh-CN'
   };
 </script>
 
-  <title>factoid233的笔记</title>
+  <title>jacoco增量代码覆盖率的实现与落地 | factoid233的笔记</title>
   
 
 
@@ -142,105 +146,10 @@
         <div class="content-wrap">
           
 
-          <div class="content index posts-expand">
+          <div class="content post posts-expand">
             
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://factoid233.github.io/diary/2023/05/17/jacoco/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/diary/images/avatar.gif">
-      <meta itemprop="name" content="Factoid233">
-      <meta itemprop="description" content="nginx python linux react docker">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="factoid233的笔记">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/diary/2023/05/17/jacoco/" class="post-title-link" itemprop="url">jacoco 增量代码覆盖率笔记 踩坑记录</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2023-05-17 10:00:17" itemprop="dateCreated datePublished" datetime="2023-05-17T10:00:17+08:00">2023-05-17</time>
-            </span>
-
-          
-
-        </div>
-      </header>
 
     
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="1-gitlab-分支比较的api-Repositories-API-Compare-返回的响应中-diffs-diff-为空"><a href="#1-gitlab-分支比较的api-Repositories-API-Compare-返回的响应中-diffs-diff-为空" class="headerlink" title="1. gitlab 分支比较的api(Repositories API Compare) 返回的响应中 $.diffs[*].diff 为空"></a>1. gitlab 分支比较的api(Repositories API Compare) 返回的响应中 $.diffs[*].diff 为空</h2><ul>
-<li>现象： 由于gitlab Diff limits的限制，即Maximum diff patch size最大只能为500KB，现像为如果新增一个文件行数特别多，返回的响应结果中 diff就是空的<blockquote>
-<p>This endpoint can be accessed without authentication if the repository is publicly accessible. Note that diffs could have an empty diff string if diff limits are reached.  <br/> <a target="_blank" rel="noopener" href="https://docs.gitlab.com/ee/api/repositories.html#compare-branches-tags-or-commits">gitlab Compare Api链接</a><br/></p>
-</blockquote>
-<table>
-<thead>
-<tr>
-<th align="left">Value</th>
-<th align="left">Definition</th>
-<th align="center">Default value</th>
-<th align="center">Maximum value</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><strong>Maximum diff patch size</strong></td>
-<td align="left">The total size, in bytes, of the entire diff.</td>
-<td align="center">200 KB</td>
-<td align="center">500 KB</td>
-</tr>
-<tr>
-<td align="left"><strong>Maximum diff files</strong></td>
-<td align="left">The total number of files changed in a diff.</td>
-<td align="center">1000</td>
-<td align="center">3000</td>
-</tr>
-<tr>
-<td align="left"><strong>Maximum diff lines</strong></td>
-<td align="left">The total number of lines changed in a diff.</td>
-<td align="center">50,000</td>
-<td align="center">100,000</td>
-</tr>
-</tbody></table>
-<blockquote>
-<p><a target="_blank" rel="noopener" href="https://docs.gitlab.com/ee/user/admin_area/diff_limits.html">gitlab diff limit链接</a></p>
-</blockquote>
-</li>
-<li>解决方案： 采用Jgit本地操作git仓库进行diff比较<h2 id="2-java编译提示-Invalid-signature-file-digest-for-Manifest-main-attributes"><a href="#2-java编译提示-Invalid-signature-file-digest-for-Manifest-main-attributes" class="headerlink" title="2. java编译提示 Invalid signature file digest for Manifest main attributes"></a>2. java编译提示 Invalid signature file digest for Manifest main attributes</h2></li>
-<li>解决方案： 删除jar包中的 *.SF *.DSA  *.RSA文件  </li>
-</ul>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
@@ -256,10 +165,9 @@
       <meta itemprop="name" content="factoid233的笔记">
     </span>
       <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/diary/2023/05/17/jacoco_share/" class="post-title-link" itemprop="url">jacoco增量代码覆盖率的实现与落地</a>
-        </h2>
+        <h1 class="post-title" itemprop="name headline">
+          jacoco增量代码覆盖率的实现与落地
+        </h1>
 
         <div class="post-meta">
             <span class="post-meta-item">
@@ -282,7 +190,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>在产品版本迭代的过程中，测试团队大部分是依据产品设计文档或者需求文档进行用例设计，无论是通过自动化测试的手段还是手工测试的手段去对产品的缺陷进行挖掘，存在以下问题：</p>
+        <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>在产品版本迭代的过程中，测试团队大部分是依据产品设计文档或者需求文档进行用例设计，无论是通过自动化测试的手段还是手工测试的手段去对产品的缺陷进行挖掘，存在以下问题：</p>
 <ol>
 <li> 不易得知用例有没有覆盖到该次代码的所有改动点。</li>
 <li> 虽然有jacoco现成的全量代码的覆盖率，但是针对于本次的代码改动不直观，不能确认本次的改动用例覆盖了多少，<br>增量代码覆盖率的出现解决了这个痛点，赋能团队精准测试的能力。</li>
@@ -309,97 +217,33 @@
 <li>搭配全量代码覆盖率作为回归测试的参考，以便完善回归用例覆盖主流程逻辑。</li>
 </ol>
 
-      
     </div>
 
     
     
     
+
       <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://factoid233.github.io/diary/2023/05/17/nginx/">
+        
 
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/diary/images/avatar.gif">
-      <meta itemprop="name" content="Factoid233">
-      <meta itemprop="description" content="nginx python linux react docker">
-    </span>
 
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="factoid233的笔记">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/diary/2023/05/17/nginx/" class="post-title-link" itemprop="url">nginx 笔记</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2023-05-17 10:00:17" itemprop="dateCreated datePublished" datetime="2023-05-17T10:00:17+08:00">2023-05-17</time>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="1-使用docker-方式部署nginx-docker映射端口不一致时无法访问"><a href="#1-使用docker-方式部署nginx-docker映射端口不一致时无法访问" class="headerlink" title="1. 使用docker 方式部署nginx  docker映射端口不一致时无法访问"></a>1. 使用docker 方式部署nginx  docker映射端口不一致时无法访问</h2><ul>
-<li><p>现象</p>
-<ul>
-<li>访问 <a target="_blank" rel="noopener" href="http://xxx.com/home/">http://xxx.com/home/</a> 带斜杠是正常的， </li>
-<li>访问 <a target="_blank" rel="noopener" href="http://xxx.com/home">http://xxx.com/home</a> 不带斜杠访问时nginx时会进行重定向，导致无法访问</li>
-</ul>
-</li>
-<li><p>原理分析</p>
-<ul>
-<li>当访问的 uri 最后带斜杠时，例如 <a target="_blank" rel="noopener" href="http://xxx.com/home/%EF%BC%8C%E6%9F%A5%E6%89%BE">http://xxx.com/home/，查找</a> home 下的 index 页面，存在就返回；若不存在且未开启自动索引目录选项（autoindex on）则报 403 错误</li>
-<li>当访问的 uri 最后不带斜杠时，例如 <a target="_blank" rel="noopener" href="http://xxx.com/home">http://xxx.com/home</a> ，会先查找 home 文件，存在就返回；若存在 home 文件夹，会在末尾加上一个斜杠并产生 301 跳转</li>
-</ul>
-</li>
-<li><p>解决方案</p>
-<ul>
-<li>对不带斜杠的 $uri 精确匹配进行rewrite 到一个可以找到的location<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">listen 7000;</span><br><span class="line">location /home &#123;</span><br><span class="line">            alias /usr/share/nginx/html;</span><br><span class="line">            index index.html;</span><br><span class="line">            if ($uri = /home)&#123;</span><br><span class="line">                rewrite .* /index.html;</span><br><span class="line">            &#125;</span><br><span class="line">       &#125;</span><br><span class="line">location / &#123;</span><br><span class="line">            root /usr/share/nginx/html;</span><br><span class="line">            index index.html;</span><br><span class="line">       &#125;</span><br></pre></td></tr></table></figure></li>
-</ul>
-</li>
-</ul>
-
-      
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/diary/2023/05/17/nginx/" rel="prev" title="nginx 笔记">
+      <i class="fa fa-chevron-left"></i> nginx 笔记
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/diary/2023/05/17/jacoco/" rel="next" title="jacoco 增量代码覆盖率笔记 踩坑记录">
+      jacoco 增量代码覆盖率笔记 踩坑记录 <i class="fa fa-chevron-right"></i>
+    </a></div>
     </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
       </footer>
+    
   </article>
   
   
-  
-
-
   
 
 
@@ -452,6 +296,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%96%B9%E6%A1%88%E8%AE%BE%E8%AE%A1"><span class="nav-number">2.</span> <span class="nav-text">方案设计</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%B7%AE%E5%BC%82%E4%BB%A3%E7%A0%81%E7%BB%86%E8%8A%82"><span class="nav-number">3.</span> <span class="nav-text">差异代码细节</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%8D%E8%B6%B3"><span class="nav-number">4.</span> <span class="nav-text">不足</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%90%8E%E7%BB%AD%E4%BC%98%E5%8C%96"><span class="nav-number">5.</span> <span class="nav-text">后续优化</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">6.</span> <span class="nav-text">总结</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
