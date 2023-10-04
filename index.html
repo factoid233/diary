@@ -148,6 +148,74 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://factoid233.github.io/diary/2023/10/04/postman/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/diary/images/avatar.gif">
+      <meta itemprop="name" content="Factoid233">
+      <meta itemprop="description" content="nginx python linux react docker">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="factoid233的笔记">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/diary/2023/10/04/postman/" class="post-title-link" itemprop="url">未命名</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2023-10-04 10:51:26" itemprop="dateCreated datePublished" datetime="2023-10-04T10:51:26+08:00">2023-10-04</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="postman-旧版本-禁止更新"><a href="#postman-旧版本-禁止更新" class="headerlink" title="postman 旧版本 禁止更新"></a>postman 旧版本 禁止更新</h2><h2 id="使用旧版本"><a href="#使用旧版本" class="headerlink" title="使用旧版本"></a>使用旧版本</h2><p>postman v10的版本以上部分导入受到了限制，必须要登录才行。登录后打开经常会卡死，还是本地使用比较好避免了关键信息泄露的风险<br>使用v9.31.28版本，本地Scratch Pad模式支持所有的导入</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">https://dl.pstmn.io/download/version/9.31.28/win64</span><br><span class="line">https://dl.pstmn.io/download/version/9.31.28/osx64</span><br><span class="line">https://dl.pstmn.io/download/version/9.31.28/osx_arm64</span><br><span class="line">https://dl.pstmn.io/download/version/9.31.28/linux_64</span><br><span class="line">https://dl.pstmn.io/download/version/9.31.28/linux_arm64</span><br></pre></td></tr></table></figure>
+<h2 id="禁止更新配置"><a href="#禁止更新配置" class="headerlink" title="禁止更新配置"></a>禁止更新配置</h2><ol>
+<li>本地需要安装nodejs </li>
+<li>新建一个存放postman源码的文件夹</li>
+<li>windows系统，win+R 输入appdata 打开appdata目录，切换到<code>C:\Users\&lt;your_account&gt;\AppData\Local\Postman\app-9.31.28\resources</code><br>在当前路径下打开cmd</li>
+<li>解压源码压缩包到目标文件夹<br>执行命令 <code>npx asar extract app.asar &lt;destfolder&gt;</code><figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># 示例</span><br><span class="line">PS C:\Users\&lt;your_account&gt;\AppData\Local\Postman\app-<span class="number">9</span>.<span class="number">31</span>.<span class="number">28</span>\resources&gt; npx asar extract app.asar D:\Projects\nodejs\postman</span><br></pre></td></tr></table></figure></li>
+<li>使用vscode 打开源码文件夹，找到services/AutoUpdaterService.js 文件，按照下方编辑后保存<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 找到这个函数</span></span><br><span class="line">isAppUpdateEnabled = <span class="keyword">function</span> (<span class="params"></span>) &#123;</span><br><span class="line">  <span class="comment">// App updates are not enabled for enterprise application</span></span><br><span class="line">  <span class="keyword">if</span> (enterpriseUtils.<span class="title function_">isEnterpriseApplication</span>()) &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="comment">// 增加这个返回</span></span><br><span class="line">  <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> <span class="title function_">_getInstallationType</span>() !== <span class="variable constant_">LINUX_SNAP</span>;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></li>
+<li>打包修改后的源码，还在当前源码根目录执行<br><code>npx asar pack . app.asar</code></li>
+<li>替换原来的app.asar<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 找到原始文件位置</span></span><br><span class="line"><span class="variable constant_">PS</span> <span class="attr">C</span>:\<span class="title class_">Users</span>\&lt;your_account&gt;\<span class="title class_">AppData</span>\<span class="title class_">Local</span>\<span class="title class_">Postman</span>\app-<span class="number">9.31</span><span class="number">.28</span>\resources&gt;</span><br><span class="line"><span class="comment">// 备份原来的app.asar 为app.asar.old</span></span><br><span class="line"><span class="comment">// 放入刚才打包好的 app.asar</span></span><br><span class="line"></span><br></pre></td></tr></table></figure></li>
+</ol>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://factoid233.github.io/diary/2023/07/23/mysql_share/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -537,7 +605,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/diary/archives/">
         
-          <span class="site-state-item-count">4</span>
+          <span class="site-state-item-count">5</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
